@@ -4,6 +4,7 @@ import {
   createDataStream,
   smoothStream,
   streamText,
+  Message,
 } from 'ai';
 import { auth, type UserType } from '@/app/(auth)/auth';
 import { type RequestHints, systemPrompt } from '@/lib/ai/prompts';
@@ -28,6 +29,7 @@ import { myProvider } from '@/lib/ai/providers';
 import { entitlementsByUserType } from '@/lib/ai/entitlements';
 import { postRequestBodySchema, type PostRequestBody } from './schema';
 import { geolocation } from '@vercel/functions';
+
 import {
   createResumableStreamContext,
   type ResumableStreamContext,
@@ -36,6 +38,8 @@ import { after } from 'next/server';
 import type { Chat } from '@/lib/db/schema';
 import { differenceInSeconds } from 'date-fns';
 import { ChatSDKError } from '@/lib/errors';
+import { createMemoryStoreFromDocuments } from '@/lib/rag/embed';
+import { askWithContext } from '@/lib/rag/ask';
 
 export const maxDuration = 60;
 
@@ -44,22 +48,21 @@ let globalStreamContext: ResumableStreamContext | null = null;
 function getStreamContext() {
   if (!globalStreamContext) {
     try {
-      globalStreamContext = createResumableStreamContext({
-        waitUntil: after,
-      });
-    } catch (error: any) {
-      if (error.message.includes('REDIS_URL')) {
-        console.log(
-          ' > Resumable streams are disabled due to missing REDIS_URL',
-        );
+      if (process.env.REDIS_URL?.startsWith('redis://')) {
+        globalStreamContext = createResumableStreamContext({
+          waitUntil: after,
+        });
+        console.log('[Stream] Resumable streaming enabled.');
       } else {
-        console.error(error);
+        console.warn('[Stream] REDIS_URL not set or invalid, using normal stream.');
       }
+    } catch (error: any) {
+      console.error('[Stream Error] Failed to create resumable stream context:', error.message);
     }
   }
-
   return globalStreamContext;
 }
+
 
 export async function POST(request: Request) {
   let requestBody: PostRequestBody;
@@ -144,6 +147,93 @@ export async function POST(request: Request) {
     const streamId = generateUUID();
     await createStreamId({ streamId, chatId: id });
 
+    // Handle document Q&A model differently
+   if (selectedChatModel === 'chat-doc-qa') {
+  const stream = createDataStream({
+    execute: async (dataStream) => {
+      try {
+        // Get the user's question
+        const userQuestion = message.parts[0]?.text || '';
+
+        // Load documents and get response
+        const store = await createMemoryStoreFromDocuments(); // You can skip if unused
+        const docResponse = await askWithContext(userQuestion, store);
+
+        console.log("Document Q&A Response:", docResponse);
+
+        // Create the assistant message
+        const assistantMessageId = generateUUID();
+        let fullText = docResponse.answer || 'No answer found in documents.';
+
+        // Add sources if available
+        if (docResponse.sources?.length > 0) {
+          const sourcesText = '\n\n**Sources:**\n' +
+            docResponse.sources.map((source: any, index: number) =>
+              `${index + 1}. ${source || 'Unknown source'}`
+            ).join('\n');
+
+          fullText += sourcesText;
+        }
+let messagedata = {
+  id: assistantMessageId,
+  role: 'assistant' as const,
+  content: JSON.stringify(
+    {
+      type: 'text',
+      text: fullText,
+    },
+  ),
+};
+
+        appendResponseMessages({
+          messages: [message],
+          responseMessages: [messagedata],
+        });
+
+
+
+        // Save the message to database
+        if (session?.user?.id) {
+          await saveMessages({
+            messages: [
+              {
+                id: assistantMessageId,
+                chatId: id,
+                role: 'assistant',
+                parts: [
+                  {
+                    type: 'text',
+                    text: fullText,
+                  },
+                ],
+                attachments: [],
+                createdAt: new Date(),
+              },
+            ],
+          });
+        }
+
+      } catch (error) {
+        console.error('Error during document Q&A:', error);
+
+        // Send fallback message
+       
+      }
+    },
+
+    onError: () => {
+      return 'Oops, an error occurred during document search!';
+    },
+  });
+
+  // ✅ CORRECT RETURN
+      return new Response(stream);
+
+  // return stream.toResponse();
+}
+
+
+    // Original streaming logic for other chat models
     const stream = createDataStream({
       execute: (dataStream) => {
         const result = streamText({
@@ -226,19 +316,21 @@ export async function POST(request: Request) {
 
     const streamContext = getStreamContext();
 
-    if (streamContext) {
-      return new Response(
-        await streamContext.resumableStream(streamId, () => stream),
-      );
-    } else {
+    // if (streamContext) {
+    //   return new Response(
+    //     await streamContext.resumableStream(streamId, () => stream),
+    //   );
+    // } else {
       return new Response(stream);
-    }
+    // }
   } catch (error) {
     if (error instanceof ChatSDKError) {
       return error.toResponse();
     }
   }
 }
+
+
 
 export async function GET(request: Request) {
   const streamContext = getStreamContext();

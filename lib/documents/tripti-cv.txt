@@ -1,0 +1,88 @@
+Tripti Sharma
++91 7619 021 664 | sharmatripti526@gmail.com | Ahmedabad, Gujarat, India
+I'm a Full Stack Developer with two years plus of professional experience at Triveni Global Software
+Services,ILEM Japan, Magdical Techdom, and Carikture. proficient in React.js, Node.js, and
+MongoDB. Led the development of 3 large-scale apps, enhancing functionality and user experience.
+seeking new challenges and opportunities for growth.
+Personal Information
+● Location: Allahabad, UP , India
+● DateofBirth: 10/06/2002
+● Nationality: Indian
+● Hobbies: Listening to songs, Playing Football (National Player)
+● Languages: Fluent in English, Hindi (Native)
+● Interests: Technology, Sports and Traveling
+Skills and Tools
+● Programming languages:- JavaScript, Java, and C Programming.
+● Frontend:- ReactJS, RemixJS, NextJS, AngularJS, SCSS, Tailwind and Bootstrap.
+● Backend:- NodeJS .Net C# and PHP .
+● Database:- MySQL, DynamoDB, and MongoDB.
+● DevOps:- Terraform, AWS, Docker, and GitHub actions.
+● Testing:- Chai and Mocha.
+● Other Skills:- Figma, Digital Marketing, Video Editing.
+Professional Experience
+Triveni Global Software Services — MERN Stack Feb 2024 - Present
+●
+●
+●
+●
+●
+Developed and maintained various frontend components including an image editor, DHTMLX
+Sheet Reports, PDF viewer using React Viewer, and real-time features using Socket.IO.
+Contributed to the restructuring of our website by adopting a Headless architecture and
+integrating RemixJS, resulting in improved performance, user experience, and streamlined
+development workflows.
+Built custom Shopify apps for managing lab-related features and pages using RemixJS,
+enabling dynamic and flexible storefront solutions.
+Created an AI-powered project using Apache NiFi, RAG (Retrieval-Augmented
+Generation), ChatGPT models, and LLMs. The system processes data inputs via PDFs,
+CSVs, and databases to provide contextual responses with source references.
+Currently working on EMS insights focused on Purchase Order (PO) models, enhancing
+visibility and intelligence around procurement workflows.
+Magdical Techdom — Software Engineer ●
+●
+Oct 2022 - Nov 2023
+Worked on a project with a team of three and with 100+ enterprise customers to develop a
+news platform to deliver the latest news about kids using cutting-edge technologies.
+In the news platform, I was responsible for building search engines, and authorizations and
+creating a bot to scrape different websites to extract the news about kids.
+●
+Later, I transitioned to the DevOps team to automate the streamlined deployment of projects
+on cloud infrastructure in the most efficient way using GitHub actions, Terraform, and AWS.
+Projects
+Nidu — A marketplace for finding blue-collar workers.
+●
+Led a four-member team to build an innovative marketplace facilitating seamless connections
+between homeowners and local blue-collar professionals, leveraging modern technology to
+streamline the traditional search process.
+●
+Developed a sophisticated web application encompassing job posting capabilities, an expert
+and local job search engine, an intuitive admin portal, and a comprehensive job management
+system.
+●
+It utilizes HTML, CSS, JavaScript, PHP , JQuery, Figma, and MySQL.
+Dome — A social media platform
+●
+Crafted a vibrant platform enabling students to connect, collaborate, and share ideas
+seamlessly. Encompassing discovery, image sharing, engagement, and interactive
+●
+commenting features.
+It is built by harnessing the power of HTML, CSS, ReactJS, NodeJS, ExpressJS, and
+●
+MongoDB to craft a seamless user experience.
+Education
+B.Tech in Computer Science United College of Engineering & Research at Prayag Raj, Uttar Pradesh, India
+Aug 2018 - July 2022
+Intermediate (Science Stream) Crosthwaite Girls' College, Prayagraj, Uttar Pradesh, India
+2016 – 2018
+High School (10th Grade) Crosthwaite Girls' College, Prayagraj, Uttar Pradesh, India
+Completed in 2016
+Achievements
+● Earned a Gold Medal in the National Football Championship organized by the All India
+National Football Association (December 2016).
+● Earned a Gold Medal in the National Science Championship organized by the All India
+National Football Association (November 2017).
+Volunteering
+Kalam Foundation (June - Sept 2020):- Executed a social media fundraising campaign to
+provide food assistance to the impoverished during lockdown.
+Hamari Pahchan (NGO) (May - June 2020):- Conducted a social media campaign to promote
+Sanitary Pads and healthy lifestyles to women.

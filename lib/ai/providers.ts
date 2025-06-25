@@ -3,7 +3,7 @@ import {
   extractReasoningMiddleware,
   wrapLanguageModel,
 } from 'ai';
-import { xai } from '@ai-sdk/xai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { isTestEnvironment } from '../constants';
 import {
   artifactModel,
@@ -11,6 +11,10 @@ import {
   reasoningModel,
   titleModel,
 } from './models.test';
+
+const gemini = createGoogleGenerativeAI({
+  apiKey: process.env.GEMINI_API_KEY!,
+});
 
 export const myProvider = isTestEnvironment
   ? customProvider({
@@ -23,15 +27,13 @@ export const myProvider = isTestEnvironment
     })
   : customProvider({
       languageModels: {
-        'chat-model': xai('grok-2-vision-1212'),
+        'chat-model': gemini('gemini-1.5-flash'),
+        'chat-doc-qa': gemini('gemini-1.5-flash'),
         'chat-model-reasoning': wrapLanguageModel({
-          model: xai('grok-3-mini-beta'),
+          model: gemini('gemini-1.5-flash'),
           middleware: extractReasoningMiddleware({ tagName: 'think' }),
         }),
-        'title-model': xai('grok-2-1212'),
-        'artifact-model': xai('grok-2-1212'),
-      },
-      imageModels: {
-        'small-model': xai.image('grok-2-image'),
+        'title-model': gemini('gemini-1.5-flash'),
+        'artifact-model': gemini('gemini-1.5-pro'),
       },
     });

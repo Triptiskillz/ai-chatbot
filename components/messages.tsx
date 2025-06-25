@@ -17,6 +17,7 @@ interface MessagesProps {
   reload: UseChatHelpers['reload'];
   isReadonly: boolean;
   isArtifactVisible: boolean;
+  initialChatModel: string;
 }
 
 function PureMessages({
@@ -27,6 +28,7 @@ function PureMessages({
   setMessages,
   reload,
   isReadonly,
+  initialChatModel,
 }: MessagesProps) {
   const {
     containerRef: messagesContainerRef,
@@ -46,25 +48,55 @@ function PureMessages({
     >
       {messages.length === 0 && <Greeting />}
 
-      {messages.map((message, index) => (
-        <PreviewMessage
-          key={message.id}
-          chatId={chatId}
-          message={message}
-          isLoading={status === 'streaming' && messages.length - 1 === index}
-          vote={
-            votes
-              ? votes.find((vote) => vote.messageId === message.id)
-              : undefined
-          }
-          setMessages={setMessages}
-          reload={reload}
-          isReadonly={isReadonly}
-          requiresScrollPadding={
-            hasSentMessage && index === messages.length - 1
-          }
-        />
-      ))}
+      {messages.map((message, index) => {
+        const isRagAnswer =
+          message.role === 'assistant' &&
+          initialChatModel === 'chat-doc-qa';
+
+        // Split answer from sources
+      const [mainText, sourcesBlock] =
+  (message.content || '').split('**Sources:**');
+
+
+        return (
+          <div key={message.id} className="relative space-y-1">
+            <PreviewMessage
+              chatId={chatId}
+              message={{
+                ...message,
+                content: mainText?.trim() || message.content?.trim() || '',
+              }}
+              isLoading={status === 'streaming' && messages.length - 1 === index}
+              vote={
+                votes?.find((vote) => vote.messageId === message.id)
+              }
+              setMessages={setMessages}
+              reload={reload}
+              isReadonly={isReadonly}
+              requiresScrollPadding={
+                hasSentMessage && index === messages.length - 1
+              }
+            />
+
+
+            {/* ✅ Render document sources in list */}
+            {isRagAnswer && sourcesBlock && (
+              <div className="text-sm text-muted-foreground px-4 mt-1">
+                <strong>Sources:</strong>
+                <ul className="list-disc ml-6 mt-1">
+                  {sourcesBlock
+                    .trim()
+                    .split('\n')
+                    .filter((line) => line.trim())
+                    .map((line, i) => (
+                      <li key={i}>{line.trim()}</li>
+                    ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        );
+      })}
 
       {status === 'submitted' &&
         messages.length > 0 &&
