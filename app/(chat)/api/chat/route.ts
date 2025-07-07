@@ -226,7 +226,6 @@ let messagedata = {
     },
   });
 
-  // ✅ CORRECT RETURN
       return new Response(stream);
 
   // return stream.toResponse();
